@@ -1,0 +1,142 @@
+meta:
+  id: vb3
+  title: DOS MZ VB3 Executable
+  file-extension:
+    - exe
+    - ovl
+  xref:
+    justsolve: MS-DOS_EXE
+    pronom: x-fmt/409
+    wikidata: Q1882110
+  license: CC0-1.0
+  endian: le
+doc: |
+  DOS MZ file format is a traditional format for executables in MS-DOS
+  environment. Many modern formats (i.e. Windows PE) still maintain
+  compatibility stub with this format.
+
+  As opposed to .com file format (which basically sports one 64K code
+  segment of raw CPU instructions), DOS MZ .exe file format allowed
+  more flexible memory management, loading of larger programs and
+  added support for relocations.
+seq:
+  - id: hdr
+    type: mz_header
+    #pos: mz_header.ne_header_addr
+  #- id: relocations
+  #  type: relocation
+  #  repeat: expr
+  #  repeat-expr: hdr.num_relocations
+  - id: body
+    size-eos: true
+instances:
+  ne_hdr:
+    type: ne_header
+    pos: hdr.ne_header_addr
+types:
+  mz_header:
+    seq:
+      - id: magic
+        size: 2
+        contents: MZ
+      - id: last_page_extra_bytes
+        type: u2
+      - id: num_pages
+        type: u2
+      - id: num_relocations
+        type: u2
+      - id: header_size
+        type: u2
+      - id: min_allocation
+        type: u2
+      - id: max_allocation
+        type: u2
+      - id: initial_ss
+        type: u2
+      - id: initial_sp
+        type: u2
+      - id: checksum
+        type: u2
+      - id: initial_ip
+        type: u2
+      - id: initial_cs
+        type: u2
+      - id: reloc_table_addr
+        type: u2
+      - id: overlay_id
+        type: u2
+      - id: reserved
+        size: 8
+      - id: oem_id
+        type: u2
+      - id: oem_info
+        type: u2
+      - id: reserved2
+        size: 20
+      - id: ne_header_addr
+        type: u4
+  ne_header:
+    seq:
+      - id: magic
+        contents: NE
+      - id: link_version
+        type: u2
+      - id: entry_table
+        type: u2
+      - id: m1aa6
+        type: u2
+      - id: crc32
+        type: u4
+      - id: flags
+        type: u2
+      - id: data_segment_number
+        type: u2
+      - id: initial_heap
+        type: u2
+      - id: initial_stack
+        type: u2
+      - id: initial_ip
+        type: u2
+      - id: initial_cs
+        type: u2
+      - id: initial_sp
+        type: u2
+      - id: initial_ss
+        type: u2
+      - id: segment_table_entry_count
+        type: u2
+      - id: module_table_entry_count
+        type: u2
+      - id: m1aff
+        type: u2
+      - id: segment_table_offset
+        type: u2
+      - id: resource_table
+        type: u2
+      - id: resident_name_table
+        type: u2
+      - id: module_reference_table
+        type: u2
+      - id: import_table
+        type: u2
+      - id: non_resident_name_table
+        type: u4
+      - id: m1b3b
+        type: u2
+      - id: misc_flags
+        type: u2
+      - id: m1b50
+        type: u2
+      - id: m1b5d
+        type: u2
+      - id: m1b69
+        type: u2
+      - id: m1b72
+        type: u2
+      - id: reserved
+        type: u2
+      - id: m1b7b
+        type: u2
+    instances:
+      segment_align:
+        value: misc_flags ^ 2
