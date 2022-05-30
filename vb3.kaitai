@@ -33,6 +33,10 @@ instances:
   ne_hdr:
     type: ne_header
     pos: hdr.ne_header_addr
+  entry_table_offset:
+    value: hdr.ne_header_addr + ne_hdr.entry_table + 1
+  # TODO: parse entry tables
+  
 types:
   mz_header:
     seq:
@@ -140,3 +144,30 @@ types:
     instances:
       segment_align:
         value: misc_flags ^ 2
+  entry_table_record_movable:
+    seq:
+      - id: segm
+        type: u1
+      - id: flags
+        type: u2
+      - id: record_seg
+        type: u1
+      - id: record_off
+        type: u2
+  entry_table_record_fixed:
+    seq:
+      - id: record_seg
+        type: u1
+      - id: record_off
+        type: u2
+  entry_table_record:
+    seq:
+      - id: entry_type
+        type: u1
+      - id: record_fixed
+        if: entry_type != 0xff and entry_type != 0
+        type: entry_table_record_fixed
+      - id: record_movable
+        if: entry_type == 0xff
+        type: entry_table_record_movable
+      
